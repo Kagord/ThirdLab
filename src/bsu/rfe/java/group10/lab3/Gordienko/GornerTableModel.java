@@ -1,17 +1,14 @@
 package bsu.rfe.java.group10.lab3.Gordienko;
-
 import javax.swing.table.AbstractTableModel;
-
-@SuppressWarnings("serial")
 public class GornerTableModel extends AbstractTableModel {
-
     private Double[] coefficients;
     private Double from;
     private Double to;
     private Double step;
+    private double result;
 
-    public GornerTableModel(Double from, Double to, Double step, Double[]
-            coefficients) {
+    public GornerTableModel(Double from, Double to, Double step, Double[] coefficients) {
+
         this.from = from;
         this.to = to;
         this.step = step;
@@ -26,35 +23,73 @@ public class GornerTableModel extends AbstractTableModel {
     public Double getStep() {
         return step;
     }
-
-    @Override
     public int getColumnCount() {
-        return 2;
+
+        return 4;
     }
-    @Override
     public int getRowCount() {
-        return 0; //new Double(Math.ceil((to-from)/step)).intValue()+1;
+
+        return new Double(Math.ceil((to-from)/step)).intValue()+1;
+    }
+    public Object getValueAt(int row, int col) {
+
+        double x = from + step * row;
+        switch (col) {
+            case 0:
+                return x;
+            case 1: {
+                result = 0.0;
+                for (int i = 0; i < coefficients.length; i++) {
+                    result += Math.pow(x, coefficients.length - 1 - i) * coefficients[i];
+                }
+                return result;
+            }
+            case 3:{
+                if ((int)result % 2 != 0){
+                    return "pain";
+                } else{
+                    return "happiness";
+                }
+            }
+            case 2:{
+                double t = result *100;
+                if ((int)t % 2 != 0){
+                    return result > 0 ;
+                } else{
+                    return result < 0;
+                }
+
+            }
+
+            default: {
+                return 0;
+            }
+
+        }
     }
     public String getColumnName(int col) {
         switch (col) {
+            case 3:
+                return "Life is";
             case 0:
                 return "Значение X";
+            case 2:
+                return "Дробная часть нечётная?";
             default:
                 return "Значение многочлена";
         }
     }
-        @Override
-    public Object getValueAt(int row, int col) {
-// Вычислить значение X как НАЧАЛО_ОТРЕЗКА + ШАГ*НОМЕР_СТРОКИ
-        double x = from + step*row;
-        if (col==0) {
-            return x;
-        } else {
-            Double result;
-// Вычисление значения в точке по схеме Горнера.
-// Вспомнить 1-ый курс и реализовать
-            return 0; //result
+    public Class<?> getColumnClass(int col) {
+// И в 1-ом и во 2-ом столбце находятся значения типа Double
+
+        if (col == 0 || col == 1){
+            return Double.class;
+        }
+        else if(col == 3){
+            return String.class;
+        }
+        else{
+            return Boolean.class;
         }
     }
-
 }
